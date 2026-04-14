@@ -1,16 +1,32 @@
-/* eslint-disable */
-import React from 'react';
+import React, { useMemo } from 'react';
 import { useAppDispatch, useAppSelector } from '../../app/hooks';
 import { setCurrentTodo } from '../../features/currentTodo';
 
 export const TodoList: React.FC = () => {
-  const {
-    todos: { todos },
-    currentTodo,
-  } = useAppSelector(state => state);
+  const { todos, isLoading } = useAppSelector(state => state.todos);
+  const currentTodo = useAppSelector(state => state.currentTodo);
+  const filter = useAppSelector(state => state.filter);
+
   const dispatch = useAppDispatch();
 
-  if (!todos.length) {
+  const visibleTodos = useMemo(() => {
+    return todos.filter(todo => {
+      const matchesQuery = todo.title
+        .toLowerCase()
+        .includes(filter.query.toLowerCase());
+
+      switch (filter.status) {
+        case 'active':
+          return !todo.completed && matchesQuery;
+        case 'completed':
+          return todo.completed && matchesQuery;
+        default:
+          return matchesQuery;
+      }
+    });
+  }, [todos, filter]);
+
+  if (!visibleTodos.length && !isLoading) {
     return (
       <p className="notification is-warning">
         There are no todos matching current filter criteria
@@ -37,11 +53,15 @@ export const TodoList: React.FC = () => {
         </thead>
 
         <tbody>
-          {todos.map(todo => (
+          {visibleTodos.map(todo => (
             <tr key={todo.id} data-cy="todo">
               <td className="is-vcentered">{todo.id}</td>
               <td className="is-vcentered">
-                {todo.completed && <i className="fas fa-check"></i>}
+                {todo.completed && (
+                  <span className="icon" data-cy="iconCompleted">
+                    <i className="fas fa-check"></i>
+                  </span>
+                )}
               </td>
               <td className="is-vcentered is-expanded">
                 <p

@@ -1,17 +1,43 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { Loader } from '../Loader';
 import { useAppDispatch, useAppSelector } from '../../app/hooks';
 import { setCurrentTodo } from '../../features/currentTodo';
+import { getUser } from '../../api';
+import { User } from '../../types/User';
 
 export const TodoModal: React.FC = () => {
-  const { currentTodo } = useAppSelector(state => state);
+  const currentTodo = useAppSelector(state => state.currentTodo);
   const dispatch = useAppDispatch();
+
+  const [currentUser, setCurrentUser] = useState<User | null>(null);
+  const [userLoading, setUserLoading] = useState(true);
+
+  useEffect(() => {
+    getUser(currentTodo?.userId!)
+      .then(user => setCurrentUser(user))
+      .catch(() => {
+        setCurrentUser({
+          id: 0,
+          name: 'Unknown user',
+          email: 'unknown',
+          phone: 'unknown',
+        });
+      })
+      .finally(() => setUserLoading(false));
+  }, [currentTodo]);
+
+  if (userLoading) {
+    return (
+      <div className="modal is-active" data-cy="modal">
+        <div className="modal-background" />
+        <Loader />
+      </div>
+    );
+  }
 
   return (
     <div className="modal is-active" data-cy="modal">
       <div className="modal-background" />
-
-      {/* <Loader /> */}
 
       <div className="modal-card">
         <header className="modal-card-head">
@@ -42,7 +68,7 @@ export const TodoModal: React.FC = () => {
               <strong className="has-text-danger">Planned</strong>
             )}
             {' by '}
-            <a href="mailto:Sincere@april.biz">Leanne Graham</a>
+            <a href="mailto:Sincere@april.biz">{currentUser?.name}</a>
           </p>
         </div>
       </div>

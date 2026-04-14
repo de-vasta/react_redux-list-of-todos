@@ -4,14 +4,19 @@ import { Loader, TodoFilter, TodoList, TodoModal } from './components';
 import { useEffect } from 'react';
 import { getTodos } from './api';
 import { useAppDispatch, useAppSelector } from './app/hooks';
-import { setTodos } from './features/todos';
+import { setLoading, setTodos } from './features/todos';
 
 export const App = () => {
   const dispatch = useAppDispatch();
-  const { currentTodo } = useAppSelector(state => state);
+  const { isLoading } = useAppSelector(state => state.todos);
+  const currentTodo = useAppSelector(state => state.currentTodo);
 
   useEffect(() => {
-    getTodos().then(todos => dispatch(setTodos(todos)));
+    dispatch(setLoading(true));
+
+    getTodos()
+      .then(todos => dispatch(setTodos(todos)))
+      .finally(() => dispatch(setLoading(false)));
   }, []);
 
   return (
@@ -26,7 +31,7 @@ export const App = () => {
             </div>
 
             <div className="block">
-              {/* <Loader /> */}
+              {isLoading && <Loader />}
               <TodoList />
             </div>
           </div>
