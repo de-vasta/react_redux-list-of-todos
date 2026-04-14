@@ -1,6 +1,12 @@
 import { createSlice } from '@reduxjs/toolkit';
+import { Status } from '../types/Status';
 
-const initialState = {
+interface FilterState {
+  query: string;
+  status: Status;
+}
+
+const initialState: FilterState = {
   query: '',
   status: 'all',
 };
