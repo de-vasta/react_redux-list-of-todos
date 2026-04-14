@@ -16,10 +16,10 @@ export const TodoFilter: React.FC = () => {
         <span className="select">
           <select
             data-cy="statusSelect"
-            onChange={event =>
-              dispatch(setStatus(event.target.value as Status))
-            }
-            value={filter.status[0].toUpperCase() + filter.status.slice(1)}
+            onChange={event => {
+              dispatch(setStatus(event.target.value as Status));
+            }}
+            value={filter.status}
           >
             <option value="all">All</option>
             <option value="active">Active</option>

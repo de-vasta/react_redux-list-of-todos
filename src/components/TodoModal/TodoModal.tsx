@@ -13,6 +13,8 @@ export const TodoModal: React.FC = () => {
   const [userLoading, setUserLoading] = useState(true);
 
   useEffect(() => {
+    setUserLoading(true);
+
     if (!currentTodo?.userId) {
       setCurrentUser(null);
       setUserLoading(false);
@@ -67,7 +69,7 @@ export const TodoModal: React.FC = () => {
               <strong className="has-text-danger">Planned</strong>
             )}
             {' by '}
-            <a href="mailto:Sincere@april.biz">{currentUser?.name}</a>
+            <a href={`mailto:${currentUser?.email}`}>{currentUser?.name}</a>
           </p>
         </div>
       </div>
