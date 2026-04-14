@@ -1,6 +1,7 @@
 import React from 'react';
 import { useAppDispatch, useAppSelector } from '../../app/hooks';
-import { setQuerry, setStatus } from '../../features/filter';
+import { setQuery, setStatus } from '../../features/filter';
+import { Status } from '../../types/Status';
 
 export const TodoFilter: React.FC = () => {
   const filter = useAppSelector(state => state.filter);
@@ -15,7 +16,10 @@ export const TodoFilter: React.FC = () => {
         <span className="select">
           <select
             data-cy="statusSelect"
-            onChange={event => dispatch(setStatus(event.target.value))}
+            onChange={event =>
+              dispatch(setStatus(event.target.value as Status))
+            }
+            value={filter.status[0].toUpperCase() + filter.status.slice(1)}
           >
             <option value="all">All</option>
             <option value="active">Active</option>
@@ -31,7 +35,7 @@ export const TodoFilter: React.FC = () => {
           className="input"
           placeholder="Search..."
           onChange={event => {
-            dispatch(setQuerry(event.target.value));
+            dispatch(setQuery(event.target.value));
           }}
           value={filter.query}
         />
@@ -45,7 +49,7 @@ export const TodoFilter: React.FC = () => {
               data-cy="clearSearchButton"
               type="button"
               className="delete"
-              onClick={() => dispatch(setQuerry(''))}
+              onClick={() => dispatch(setQuery(''))}
             />
           )}
         </span>

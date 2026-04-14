@@ -13,16 +13,15 @@ export const TodoModal: React.FC = () => {
   const [userLoading, setUserLoading] = useState(true);
 
   useEffect(() => {
-    getUser(currentTodo?.userId!)
+    if (!currentTodo?.userId) {
+      setCurrentUser(null);
+      setUserLoading(false);
+
+      return;
+    }
+
+    getUser(currentTodo?.userId)
       .then(user => setCurrentUser(user))
-      .catch(() => {
-        setCurrentUser({
-          id: 0,
-          name: 'Unknown user',
-          email: 'unknown',
-          phone: 'unknown',
-        });
-      })
       .finally(() => setUserLoading(false));
   }, [currentTodo]);
 

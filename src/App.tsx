@@ -17,7 +17,7 @@ export const App = () => {
     getTodos()
       .then(todos => dispatch(setTodos(todos)))
       .finally(() => dispatch(setLoading(false)));
-  }, []);
+  }, [dispatch]);
 
   return (
     <>
